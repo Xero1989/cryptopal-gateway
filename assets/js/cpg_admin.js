@@ -5,10 +5,13 @@ jQuery(document).ready(function () {
 });
 
 
-function xis_save_products_ids() {
+function cpg_save_settings() {
   
-  var action = "xis_save_products_ids";  
-  let xis_products_ids = jQuery("#xis_products_ids").val();
+  var action = "cpg_save_settings";  
+  let cpg_enable = jQuery("#cpg_enable").prop("checked");
+  let cpg_description = jQuery("#cpg_description").val();
+  let cpg_merchant_id = jQuery("#cpg_merchant_id").val();
+  let cpg_webhook_url = jQuery("#cpg_webhook_url").val();
 
   jQuery(".bt_save_settings").attr("disabled", true);
   jQuery(".bt_save_settings").val("Sending Data...");
@@ -18,7 +21,10 @@ function xis_save_products_ids() {
     type: "post",
     data: {
       action: action,
-      xis_products_ids: xis_products_ids,      
+      cpg_enable: cpg_enable,      
+      cpg_description: cpg_description,      
+      cpg_merchant_id: cpg_merchant_id,      
+      cpg_webhook_url: cpg_webhook_url,      
     },
     success: function (server_response) {
       server_response = JSON.parse(server_response);      

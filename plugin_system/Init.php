@@ -1,6 +1,6 @@
 <?php
 
-class XIS_Init
+class CPG_Init
 {
 
     function __construct()
@@ -24,17 +24,16 @@ class XIS_Init
 
     function load_filters()
     {
-     //   add_filter('woocommerce_checkout_fields', 'XIS_CheckoutController::woocommerce_checkout_fields',10,2);
+     //   add_filter('woocommerce_checkout_fields', 'CPG_CheckoutController::woocommerce_checkout_fields',10,2);
     }
 
     function load_actions()
     {
-        add_action('admin_menu', 'XIS_AdminController::create_custom_menu');
-        add_action('wp_ajax_xis_save_products_ids', 'XIS_AdminController::save_products_ids');          
+        add_action('admin_menu', 'CPG_AdminController::create_custom_menu');
+        add_action('wp_ajax_cpg_save_settings', 'CPG_AdminController::cpg_save_settings');          
     }
 
-    function load_shortcodes(){
+    function load_shortcodes(){       
         
-        add_shortcode('xis_footer_form_suscribe', 'XIS_FooterSuscribeFormController::show_form');
     }
 }

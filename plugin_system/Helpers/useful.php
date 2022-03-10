@@ -1,6 +1,6 @@
 <?php
 
-class XIS_Useful
+class CPG_Useful
 {
 
     function ajax_server_response($server_response = array())

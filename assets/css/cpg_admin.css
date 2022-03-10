@@ -1,0 +1,12 @@
+#cpg_form_admin textarea{
+    width: 50%;
+    height: 8em;
+}
+
+#cpg_form_admin input[type="text"]{
+    width: 50%;;
+}
+
+#cpg_form_admin table th{
+width: 15%;
+}

@@ -5,7 +5,7 @@ class XIS_CheckoutController
 
   function woocommerce_checkout_fields($fields)
     {
-        XIS_Useful::log("woocommerce_checkout_fields");
+       CPG_Useful::log("woocommerce_checkout_fields");
         // XIS_Useful::log($fields);
 
       //   $fields['shipping']['shipping_distritos'] = [

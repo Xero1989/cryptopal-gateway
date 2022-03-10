@@ -1,6 +1,6 @@
 <?php
 
-class XIS_Blade
+class CPG_Blade
 {
 
     function view($BladePage, $Attributes)
