@@ -1,0 +1,28 @@
+.ajax_response_message_box {
+    padding: 1% 0;
+    text-align: center;
+    color: white;
+    font-weight: bold;
+    display: none;
+    margin-bottom: 2%;
+}
+
+.success {
+    background-color: #73bd00;
+}
+
+.wrong {
+    background-color: rgb(204, 0, 0);
+}
+
+.warning {
+    background-color: rgb(236, 111, 53);
+}
+
+.info {
+    background-color: rgb(51, 183, 235);
+}
+
+.primary {
+    background-color: rgb(20, 71, 167);
+}
