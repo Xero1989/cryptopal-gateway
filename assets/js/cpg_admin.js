@@ -10,7 +10,7 @@ function cpg_save_settings() {
   var action = "cpg_save_settings";  
   let cpg_enable = jQuery("#cpg_enable").prop("checked");
   let cpg_description = jQuery("#cpg_description").val();
-  let cpg_merchant_id = jQuery("#cpg_merchant_id").val();
+  let cpg_webshop_id = jQuery("#cpg_webshop_id").val();
   let cpg_webhook_url = jQuery("#cpg_webhook_url").val();
 
   jQuery(".bt_save_settings").attr("disabled", true);
@@ -23,7 +23,7 @@ function cpg_save_settings() {
       action: action,
       cpg_enable: cpg_enable,      
       cpg_description: cpg_description,      
-      cpg_merchant_id: cpg_merchant_id,      
+      cpg_webshop_id: cpg_webshop_id,      
       cpg_webhook_url: cpg_webhook_url,      
     },
     success: function (server_response) {

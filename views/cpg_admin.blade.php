@@ -10,7 +10,7 @@
                     Enable
                 </th>
                 <td>
-                    @if($cpg_enable == "true")
+                    @if($cpg_enable)
                     <input type="checkbox" id="cpg_enable" checked />
                     @else
                     <input type="checkbox" id="cpg_enable" />
@@ -27,10 +27,10 @@
             </tr>
             <tr>
                 <th>
-                    <label>Merchant ID</label>
+                    <label>Webshop ID</label>
                 </th>
                 <td>
-                    <input type="text" value="{{$cpg_merchant_id}}" id="cpg_merchant_id" />
+                    <input type="text" value="{{$cpg_webshop_id}}" id="cpg_webshop_id" />
                 </td>
             </tr>
             <tr>

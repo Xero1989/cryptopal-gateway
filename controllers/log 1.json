@@ -1,0 +1,20 @@
+"get_app_url_from_cryptopal"
+
+{
+    "items": [{
+        "name": "Laptop",
+        "amount": "1",
+        "price": "500"
+    }],
+    "webshopID": "QXL45ERNwyAJ6pJAn",
+    "currency": "EUR"
+}
+
+"https:\/\/demo.teslacryptocap.com\/cryptopalPayments"
+
+{
+    "url": "https:\/\/demo.teslacryptocap.com\/pay?id=wQoymNbGuGkTnkFhu",
+    "paymentID": "wQoymNbGuGkTnkFhu"
+}
+
+"url https:\/\/demo.teslacryptocap.com\/pay?id=wQoymNbGuGkTnkFhu"

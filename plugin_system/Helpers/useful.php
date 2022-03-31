@@ -3,7 +3,7 @@
 class CPG_Useful
 {
 
-    function ajax_server_response($server_response = array())
+    static function ajax_server_response($server_response = array())
     {
         if (!isset($server_response["status"])) {
             $server_response["status"] = "success";
@@ -16,7 +16,7 @@ class CPG_Useful
         die();
     }
 
-    function log($data, $to_json = true)
+    static function log($data, $to_json = true)
     {
 
         $path = ABSPATH . '/log.json';

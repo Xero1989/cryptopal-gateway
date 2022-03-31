@@ -17,26 +17,30 @@ function cpg_plugin_activation()
 {
    add_option("cpg_enable", true);
    add_option("cpg_description", "");
-   add_option("cpg_merchant_id", "");
+   add_option("cpg_webshop_id", "");
    add_option("cpg_webhook_url", "");
 }
 
 register_deactivation_hook(__FILE__, 'cpg_plugin_deactivation');
 
-
 function cpg_plugin_deactivation()
 {
     delete_option("cpg_enable");
     delete_option("cpg_description");
-    delete_option("cpg_merchant_id");
+    delete_option("cpg_webshop_id");
     delete_option("cpg_webhook_url");
 }
 
-require __DIR__ . '/vendor/autoload.php';
 
-require 'plugin_system/Init.php';
 
-require 'controllers/AdminController.php';
-//require 'controllers/CheckoutController.php';
+ require __DIR__ . '/vendor/autoload.php';
 
-new CPG_Init();
+ require 'plugin_system/Init.php';
+
+ require 'controllers/AdminController.php';
+ require 'controllers/CryptopalController.php';
+
+
+ new CPG_Init();
+
+
