@@ -31,6 +31,27 @@ class CPG_CryptopalController
     CPG_Blade::view('cpg-modal-payment');
   }
 
+
+
+  static function checkout_field_process()
+  {
+    CPG_Useful::log("checkout_field_process");
+    CPG_Useful::log($_POST);
+
+     $payment_method = $order->get_payment_method();
+     CPG_Useful::log("payment method ".$payment_method);
+
+    // if ($payment_method == "pago_efectivo_gateway") 
+
+    $shipping_methods = $_POST['shipping_method'];
+
+    CPG_CryptopalController::get_app_url_from_cryptopal();
+
+    // if (!isset($_POST['billing_departamentos']) || $_POST['billing_departamentos'] == "")
+    //   wc_add_notice(__('<b>Facturacion Departamento</b> es un campo requerido.'), 'error');
+
+  }
+
   static function get_app_url_from_cryptopal()
   {
     CPG_Useful::log("get_app_url_from_cryptopal");
@@ -54,26 +75,47 @@ class CPG_CryptopalController
     CPG_Useful::log("url $url_payment");
 
     if ($response != false) {
-      CPG_Useful::ajax_server_response(array("message" => "Settings has been saved correctly", "url" => $url_payment));
-    } else CPG_Useful::ajax_server_response(array("status" => "error", "message" => "There was an error consulting the data,please try again...", "url" => ""));
+     // CPG_Useful::ajax_server_response(array("message" => "Settings has been saved correctly", "url" => $url_payment));
+     wp_enqueue_script('js_cryptopal', plugin_dir_url(__FILE__) . '../assets/js/cpg_cryptopal.js', array(), '1.0');
+     
+     wp_add_inline_script('js_cryptopal', 'var url_cryptopal_app = "'.$url_payment.'";');
+    } else {
+    //  CPG_Useful::ajax_server_response(array("status" => "error", "message" => "There was an error consulting the data,please try again...", "url" => ""));
+
+      wp_add_inline_script('js_cryptopal', 'var url_cryptopal_app = "";');
   }
+
+  echo '<script type="text/javascript" >
+  open_cryptopal_app_window();
+  </script>';
+
+}
 
 
   static function get_api_info($items)
   {
     $url = "https://demo.teslacryptocap.com/cryptopalPayments";
 
-    $webshop_id = get_option("cpg_webshop_id");
+    $payment_gateway_id = 'cryptopal_gateway';
+
+       // Get an instance of the WC_Payment_Gateways object
+     $payment_gateways   = WC_Payment_Gateways::instance();
+
+      // Get the desired WC_Payment_Gateway object
+      $payment_gateway    = $payment_gateways->payment_gateways()[$payment_gateway_id];
+
+    //$webshop_id = get_option("cpg_webshop_id");
+    $webshop_id = $payment_gateway->cpg_webshop_id;
     $currency = get_woocommerce_currency();
 
     $body = array(
       "items" => array($items),
-      "webshopID" => $webshop_id,
+      "webshopID" => 'K5xkG3DFfSpNMoi9Y',
       "currency" => $currency
     );
 
     CPG_Useful::log($body);
-    CPG_Useful::log($url);
+   // CPG_Useful::log($url);
 
     $response = wp_remote_post(
       $url,
@@ -104,22 +146,26 @@ class CPG_CryptopalController
     }
   }
 
+static function open_crypto_payment_window($text, $order){
+  session_start();
+  $url = $_SESSION['cryptopal_url_payment'];
 
-  static function checkout_field_process()
-  {
-    CPG_Useful::log("checkout_field_process");
-    CPG_Useful::log($_POST);
+  $payment_method = $order->get_payment_method();
 
-    // $payment_method = $order->get_payment_method();
 
-    // if ($payment_method == "pago_efectivo_gateway") 
+  if ($payment_method == "cryptopal_gateway") {
 
-    $shipping_methods = $_POST['shipping_method'];
+    wp_enqueue_script('js_cryptopal', plugin_dir_url(__FILE__) . '../assets/js/cpg_cryptopal.js', array(), '1.0');
+     
+    //wp_add_inline_script('js_cryptopal', 'var url_cryptopal_app = "'.$url_payment.'";');
+    wp_add_inline_script('js_cryptopal', 'open_cryptopal_app_window("'.$url.'");');
 
-    // if (!isset($_POST['billing_departamentos']) || $_POST['billing_departamentos'] == "")
-    //   wc_add_notice(__('<b>Facturacion Departamento</b> es un campo requerido.'), 'error');
+    //return 'Hola mundo crypto '.$url.$payment_method;
 
   }
+
+}
+ 
 
   static function cryptopal_notification()
   {
@@ -143,18 +189,6 @@ class CPG_CryptopalController
     $headers = $req->get_headers();
     $body = $req->get_body();
 
-    // $header_signature = $req->get_header('pe_signature');
-
-    // $gateway = create_xirect_pagoefectivo_gateway();
-    // $secret_key = $gateway->settings['xpeg_secret_key'];
-
-    // $mix_signature = hash_hmac('sha256', $body, $secret_key);
-
-    // //Check pagoefectivo token its correct
-    // if ($header_signature != $mix_signature)
-    //   return http_response_code(401);
-
-
     //Change order status
     $body = json_decode($body, true);
 
@@ -164,7 +198,7 @@ class CPG_CryptopalController
 
     // $id_order = $body["data"]["transactionCode"];
 
-    // $order = wc_get_order($id_order);
+    // $order = wc_get_order($id_order);  
     // $order->set_status('wc-completed');
     // $order->save();
 

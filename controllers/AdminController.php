@@ -23,7 +23,7 @@ static function create_cryptopal_gateway()
  *          
  * @return object returns the cryptopal gateway instance
  */
-function add_new_gateway($gateways)
+static function add_new_gateway($gateways)
 {
   $gateways[] = 'Cryptopal_Gateway_Main';
   return $gateways;

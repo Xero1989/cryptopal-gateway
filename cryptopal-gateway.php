@@ -10,6 +10,12 @@ Author URI: jorgewebcuba.000webhostapp.com/curriculum-vitae/
 License: GPL2+
 */
 
+/*
+if ( !class_exists( 'woocommerce' ) ) { 
+    deactivate_plugins( plugin_basename( __FILE__ ) );
+    wp_die( '‘My Plugin requires WordPress 3.7 or higher!' );
+ }
+*/
 
 register_activation_hook(__FILE__, 'cpg_plugin_activation');
 
@@ -42,5 +48,6 @@ function cpg_plugin_deactivation()
 
 
  new CPG_Init();
+ 
 
 

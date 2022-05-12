@@ -11,50 +11,9 @@ class Cryptopal_Gateway_Main extends WC_Payment_Gateway
     public function __construct()
     {
 
-        $img_centros_1 = array("BBVA", "BCP", "INTERBANK", "SCOTIABANK", "BANBIF", "CAJA AREQUIPA", "BANCO PICHINCHA");
-        $img_centros_2 = array("BBVA", "BCP", "INTERBANK", "SCOTIABANK", "BANBIF", "WESTERN UNION", "TAMBO", "KASNET", "YA GANASTE", "AGENTE RED DIGITAL", "NIUBIZ", "MONEY GRAM", "CAJA AREQUIPA", "DISASHOP", "CELLPOWER");
-
-        // $description_html = '<div class="div_title">
-        // <h3>
-        // Genera un código de 8 dígitos y págalo a través de:
-        // </h3>
-
-        // <a class="label_how_it_work"> ¿Cómo funciona? </a>
-
-        // </div>
-
-        // <p>
-        // <b class="check_sign"> Banca Móvil / Internet -</b> Paga en BBVA, BCP, Interbank, Scotiabank,BanBif, Caja Arequipa y Banco Pichincha, a través de la opción pago de servicios.
-        // </p>
-
-        // <div class="div_payment_center">';
-        // foreach($img_centros_1 as $img){
-        //    $description_html .= '<img src="' . plugin_dir_url(__FILE__) . 'assets/images/centros_de_pago/'.$img.'.png" />';
-        // }
-
-        // $description_html .= '
-
-        // </div>
-
-        // <p style="margin-top: 2em;">
-        // <b class="check_sign"> Agentes y Bodegas -</b> Deposita en BBVA, BCP, Interbank, Scotiabank, BanBif, Western Union, Tambo+, Kasnet, Ya Ganaste, Red Digital, Comercio Niubiz Multiservicio, MoneyGram, Caja Arequipa, Disashop, Cellpower.        
-        // </p>
-
-        // <div class="div_payment_center" id="div_payment_center_2">';
-        // foreach($img_centros_2 as $img){
-        //     $description_html .= '<img src="' . plugin_dir_url(__FILE__) . 'assets/images/centros_de_pago/'.$img.'.png" />';
-        //  }
-
-        //  $description_html .= '
-
-        // </div>';
-
-        $description_html = "Cryptopal gateway allows you to pay on crypto-currency";
-
-        // $this->api_pagoefectivo = new PagoEfectivoGatewayApi();
         $this->id = 'cryptopal_gateway'; // payment gateway plugin ID
         $this->title = "Cryptopal Gateway";
-        $this->description = $description_html;
+        $this->description = "Cryptopal gateway allows you to pay on crypto-currency";
         $this->icon = plugin_dir_url(__FILE__) . '../assets/img/antonella-icon.png'; // URL of the icon that will be displayed on checkout page near your gateway name
         $this->has_fields = true; // in case you need a custom credit card form
         $this->method_title = 'Cryptopal Gateway';
@@ -65,9 +24,7 @@ class Cryptopal_Gateway_Main extends WC_Payment_Gateway
 
         // Load the settings.
         $this->init_settings();
-
-        // wp_enqueue_style("css_pagoefectivo_gateway", plugin_dir_url(__FILE__) . "assets/css/pagoefectivo_gateway.css");
-
+        
         add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
     }
 
@@ -101,13 +58,13 @@ class Cryptopal_Gateway_Main extends WC_Payment_Gateway
                 'desc_tip'    => true,
             ),
 
-            'cpg_webhook' => array(
+            /*'cpg_webhook' => array(
                 'title'       => 'Webhook URL',
                 'type'        => 'text',
                 'description' => 'The webhook URL of the cryptopal webshop',
                 'default'     => '',
                 'desc_tip'    => true,
-            ),
+            ),*/
         );
     }
 
@@ -121,7 +78,7 @@ class Cryptopal_Gateway_Main extends WC_Payment_Gateway
 
         $description = $post_data["woocommerce_cryptopal_gateway_cpg_description"];
         $webshop_id = $post_data["woocommerce_cryptopal_gateway_cpg_webshop_id"];
-        $webhook = $post_data["woocommerce_cryptopal_gateway_cpg_webhook"];
+       // $webhook = $post_data["woocommerce_cryptopal_gateway_cpg_webhook"];
 
         $settings = new WC_Admin_Settings();
 
@@ -133,9 +90,9 @@ class Cryptopal_Gateway_Main extends WC_Payment_Gateway
             $settings->add_error('You must enter a "Webshop ID"');
         }
 
-        if ($webhook == "") {
+      /*  if ($webhook == "") {
             $settings->add_error('You must enter a "Webhook"');
-        }
+        }*/
 
         return parent::process_admin_options();
     }
@@ -179,17 +136,13 @@ class Cryptopal_Gateway_Main extends WC_Payment_Gateway
 
             $url_payment = $response["url"];        
 
-            CPG_Useful::log("All good $url_payment");
+            CPG_Useful::log("URL de pago $url_payment");
+            
+            //return;
+             session_start();
+            $_SESSION['cryptopal_url_payment'] = $url_payment;
 
-            return;
-            // session_start();
-
-            // //  update_post_meta($id_order, 'xup_departamento', $departamento);
-
-            // $_SESSION["xpeg_cip"] = $result["data"]["cip"];
-            // $_SESSION["xpeg_cip_url"] = $result["data"]["cipUrl"];
-            // $_SESSION["xpeg_numero_pedido"] = $result["data"]["transactionCode"];
-
+            
             // Mark as on-hold (we're awaiting the payment)
             $order->update_status('on-hold', __('Awaiting offline payment', 'wc-gateway-offline'));
 
@@ -209,49 +162,5 @@ class Cryptopal_Gateway_Main extends WC_Payment_Gateway
         }
     }
 
-    public function get_api_info($products)
-    {
-        $url = "https://demo.teslacryptocap.com/cryptopalPayments";
-
-        $webshop_id = $this->settings['cpg_webshop_id'];
-        //        $webshop_id = get_option("cpg_webshop_id");
-        $currency = get_woocommerce_currency();
-
-        $body = array(
-            "items" => $products,
-            "webshopID" => $webshop_id,
-            "currency" => $currency
-        );
-
-        CPG_Useful::log($body);
-        CPG_Useful::log($url);
-
-        $response = wp_remote_post(
-            $url,
-            array(
-                'headers' => array('Content-Type' => 'application/json'),
-                'body' => wp_json_encode($body),
-            )
-        );
-
-        $response_code = wp_remote_retrieve_response_code($response);
-        $body = wp_remote_retrieve_body($response);
-
-        if ($response_code == 200) {
-            $body = wp_remote_retrieve_body($response);
-
-            $body = json_decode($body, true);
-            CPG_Useful::log($body);
-
-            return $body;
-        } else {
-            CPG_Useful::log("Ocurrio un error consultando el API crytopal...");
-            CPG_Useful::log($response);
-            CPG_Useful::log($body);
-
-            $body = json_decode($body, true);
-
-            return false;
-        }
-    }
+   
 }
