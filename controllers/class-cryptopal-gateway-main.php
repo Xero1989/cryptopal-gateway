@@ -135,14 +135,22 @@ class Cryptopal_Gateway_Main extends WC_Payment_Gateway
         } else {
 
             $url_payment = $response["url"];        
+            $paymentID = $response["paymentID"];        
 
             CPG_Useful::log("URL de pago $url_payment");
+          
+           
             
             //return;
              session_start();
             $_SESSION['cryptopal_url_payment'] = $url_payment;
 
-            
+            $order->update_meta_data( 'cryptopal_paymentID', $paymentID );
+
+            $meta_data = $order->get_meta('cryptopal_paymentID');
+
+            CPG_Useful::log("metadata created >> $meta_data");
+
             // Mark as on-hold (we're awaiting the payment)
             $order->update_status('on-hold', __('Awaiting offline payment', 'wc-gateway-offline'));
 

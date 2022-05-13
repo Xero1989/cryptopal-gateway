@@ -38,8 +38,8 @@ class CPG_CryptopalController
     CPG_Useful::log("checkout_field_process");
     CPG_Useful::log($_POST);
 
-     $payment_method = $order->get_payment_method();
-     CPG_Useful::log("payment method ".$payment_method);
+    $payment_method = $order->get_payment_method();
+    CPG_Useful::log("payment method " . $payment_method);
 
     // if ($payment_method == "pago_efectivo_gateway") 
 
@@ -75,21 +75,20 @@ class CPG_CryptopalController
     CPG_Useful::log("url $url_payment");
 
     if ($response != false) {
-     // CPG_Useful::ajax_server_response(array("message" => "Settings has been saved correctly", "url" => $url_payment));
-     wp_enqueue_script('js_cryptopal', plugin_dir_url(__FILE__) . '../assets/js/cpg_cryptopal.js', array(), '1.0');
-     
-     wp_add_inline_script('js_cryptopal', 'var url_cryptopal_app = "'.$url_payment.'";');
+      // CPG_Useful::ajax_server_response(array("message" => "Settings has been saved correctly", "url" => $url_payment));
+      wp_enqueue_script('js_cryptopal', plugin_dir_url(__FILE__) . '../assets/js/cpg_cryptopal.js', array(), '1.0');
+
+      wp_add_inline_script('js_cryptopal', 'var url_cryptopal_app = "' . $url_payment . '";');
     } else {
-    //  CPG_Useful::ajax_server_response(array("status" => "error", "message" => "There was an error consulting the data,please try again...", "url" => ""));
+      //  CPG_Useful::ajax_server_response(array("status" => "error", "message" => "There was an error consulting the data,please try again...", "url" => ""));
 
       wp_add_inline_script('js_cryptopal', 'var url_cryptopal_app = "";');
+    }
+
+    echo '<script type="text/javascript" >
+              open_cryptopal_app_window();
+            </script>';
   }
-
-  echo '<script type="text/javascript" >
-  open_cryptopal_app_window();
-  </script>';
-
-}
 
 
   static function get_api_info($items)
@@ -98,11 +97,11 @@ class CPG_CryptopalController
 
     $payment_gateway_id = 'cryptopal_gateway';
 
-       // Get an instance of the WC_Payment_Gateways object
-     $payment_gateways   = WC_Payment_Gateways::instance();
+    // Get an instance of the WC_Payment_Gateways object
+    $payment_gateways   = WC_Payment_Gateways::instance();
 
-      // Get the desired WC_Payment_Gateway object
-      $payment_gateway    = $payment_gateways->payment_gateways()[$payment_gateway_id];
+    // Get the desired WC_Payment_Gateway object
+    $payment_gateway    = $payment_gateways->payment_gateways()[$payment_gateway_id];
 
     //$webshop_id = get_option("cpg_webshop_id");
     $webshop_id = $payment_gateway->cpg_webshop_id;
@@ -115,7 +114,7 @@ class CPG_CryptopalController
     );
 
     CPG_Useful::log($body);
-   // CPG_Useful::log($url);
+    // CPG_Useful::log($url);
 
     $response = wp_remote_post(
       $url,
@@ -146,26 +145,28 @@ class CPG_CryptopalController
     }
   }
 
-static function open_crypto_payment_window($text, $order){
-  session_start();
-  $url = $_SESSION['cryptopal_url_payment'];
+  static function open_crypto_payment_window($text, $order)
+  {
+    session_start();
+    $url = $_SESSION['cryptopal_url_payment'];
 
-  $payment_method = $order->get_payment_method();
+    $payment_method = $order->get_payment_method();
 
 
-  if ($payment_method == "cryptopal_gateway") {
+    if ($payment_method == "cryptopal_gateway") {
 
-    wp_enqueue_script('js_cryptopal', plugin_dir_url(__FILE__) . '../assets/js/cpg_cryptopal.js', array(), '1.0');
-     
-    //wp_add_inline_script('js_cryptopal', 'var url_cryptopal_app = "'.$url_payment.'";');
-    wp_add_inline_script('js_cryptopal', 'open_cryptopal_app_window("'.$url.'");');
+      wp_enqueue_script('js_cryptopal', plugin_dir_url(__FILE__) . '../assets/js/cpg_cryptopal.js', array(), '1.0');
 
-    //return 'Hola mundo crypto '.$url.$payment_method;
+      //wp_add_inline_script('js_cryptopal', 'var url_cryptopal_app = "'.$url_payment.'";');
+      wp_add_inline_script('js_cryptopal', 'open_cryptopal_app_window("' . $url . '");');
 
+      //return 'Hola mundo crypto '.$url.$payment_method;
+
+    }
+
+    return '';
   }
 
-}
- 
 
   static function cryptopal_notification()
   {
@@ -192,11 +193,25 @@ static function open_crypto_payment_window($text, $order){
     //Change order status
     $body = json_decode($body, true);
 
-    CPG_Useful::log("webhhook data");
+    CPG_Useful::log("webhook data");
     CPG_Useful::log($body);
     //{"paymentID":"WCZzs4JecoKtTif9W","status":"successful"}
+    $paymentID = $body["paymentID"];        
 
-    // $id_order = $body["data"]["transactionCode"];
+    $args = array(
+      'return' => 'ids',
+      'payment_method' => 'cryptopal_gateway',
+      'cryptopal_paymentID' => $paymentID
+  );
+  $orders = wc_get_orders( $args );
+
+  //$orders = wc_get_orders( array( 'cryptopal_paymentID' => 'somevalue' ) );
+
+  CPG_Useful::log('response del webhook '.$orders);
+  CPG_Useful::log(json_decode($orders, true));
+  
+
+  //$order->get_id()
 
     // $order = wc_get_order($id_order);  
     // $order->set_status('wc-completed');
