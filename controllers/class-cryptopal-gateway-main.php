@@ -24,7 +24,7 @@ class Cryptopal_Gateway_Main extends WC_Payment_Gateway
 
         // Load the settings.
         $this->init_settings();
-        
+
         add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
     }
 
@@ -78,7 +78,7 @@ class Cryptopal_Gateway_Main extends WC_Payment_Gateway
 
         $description = $post_data["woocommerce_cryptopal_gateway_cpg_description"];
         $webshop_id = $post_data["woocommerce_cryptopal_gateway_cpg_webshop_id"];
-       // $webhook = $post_data["woocommerce_cryptopal_gateway_cpg_webhook"];
+        // $webhook = $post_data["woocommerce_cryptopal_gateway_cpg_webhook"];
 
         $settings = new WC_Admin_Settings();
 
@@ -90,7 +90,7 @@ class Cryptopal_Gateway_Main extends WC_Payment_Gateway
             $settings->add_error('You must enter a "Webshop ID"');
         }
 
-      /*  if ($webhook == "") {
+        /*  if ($webhook == "") {
             $settings->add_error('You must enter a "Webhook"');
         }*/
 
@@ -120,7 +120,7 @@ class Cryptopal_Gateway_Main extends WC_Payment_Gateway
             //$subtotal = $item->get_subtotal();
 
             $product = array("name" => $name, "amount" => $amount, "price" => $price);
-            array_push($products,$product);
+            array_push($products, $product);
         }
 
         //$settings = compact('xpeg_api_token_url', 'xpeg_api_payment_url', 'xpeg_id_service', 'xpeg_access_key', 'xpeg_secret_key', 'xpeg_expiration_day', 'xpeg_merchant_name', 'xpeg_payment_concept', 'xpeg_merchant_category', 'xpeg_user_ubigeo', 'xpeg_user_document_type', 'xpeg_user_code_country');
@@ -128,31 +128,57 @@ class Cryptopal_Gateway_Main extends WC_Payment_Gateway
         CPG_Useful::log($products);
         $response = CPG_CryptopalController::get_api_info($products);
 
-       
+
 
         if (!$response) {
             return;
         } else {
 
-            $url_payment = $response["url"];        
-            $paymentID = $response["paymentID"];        
+            $url_payment = $response["url"];
+            $paymentID = $response["paymentID"];
 
-            CPG_Useful::log("URL de pago $url_payment");
-          
-           
-            
+           // CPG_Useful::log("URL de pago $url_payment");
+
+
+
             //return;
-             session_start();
+            session_start();
             $_SESSION['cryptopal_url_payment'] = $url_payment;
 
-            $order->update_meta_data( 'cryptopal_paymentID', $paymentID );
+            $order->update_meta_data('cryptopal_paymentID', $paymentID);
 
-            $meta_data = $order->get_meta('cryptopal_paymentID');
+            // $meta_data = $order->get_meta('cryptopal_paymentID');
 
-            CPG_Useful::log("metadata created >> $meta_data");
+            // CPG_Useful::log("metadata created >> $meta_data");
+
+            // $args = array(
+            //   'return' => 'ids',
+            //   //  'payment_method' => 'cryptopal_gateway',
+            //    // 'cryptopal_paymentID' => '$paymentID123456'
+            //    'paginate' => false
+            // );
+            // $orders = wc_get_orders($args);
+
+          
+
+            //$orders = wc_get_orders( array( 'cryptopal_paymentID' => 'somevalue' ) );
+
+           // CPG_Useful::log('response del webhook ' . $orders);
+            //CPG_Useful::log(json_decode($orders, true));
+
+            // CPG_Useful::log('json_encode($orders)');
+            // CPG_Useful::log(json_encode($orders));
+        //     CPG_Useful::log("orders");
+        //     CPG_Useful::log($orders);    
+        //     CPG_Useful::log("orders [0][0]");       
+        //    // CPG_Useful::log($orders[0][0]);   
+        //     CPG_Useful::log("orders [0]");       
+        //     CPG_Useful::log($orders[0]['ID']);   
+
+
 
             // Mark as on-hold (we're awaiting the payment)
-            $order->update_status('on-hold', __('Awaiting offline payment', 'wc-gateway-offline'));
+            $order->update_status('on-hold', __('Awaiting for Cryptopal online payment...', 'wc-gateway-offline'));
 
             // Reduce stock levels
             $order->reduce_order_stock();
@@ -169,6 +195,4 @@ class Cryptopal_Gateway_Main extends WC_Payment_Gateway
             );
         }
     }
-
-   
 }

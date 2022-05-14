@@ -36,8 +36,8 @@ class CPG_Init
     function load_actions()
     {
         //Admin menu version
-        add_action('admin_menu', 'CPG_AdminController::create_custom_menu');
-        add_action('wp_ajax_cpg_save_settings', 'CPG_AdminController::cpg_save_settings');
+      //  add_action('admin_menu', 'CPG_AdminController::create_custom_menu');
+       // add_action('wp_ajax_cpg_save_settings', 'CPG_AdminController::cpg_save_settings');
 
         //Gateway version
         add_action('plugins_loaded', 'CPG_AdminController::create_cryptopal_gateway', 11);

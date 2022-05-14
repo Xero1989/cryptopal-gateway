@@ -196,26 +196,22 @@ class CPG_CryptopalController
     CPG_Useful::log("webhook data");
     CPG_Useful::log($body);
     //{"paymentID":"WCZzs4JecoKtTif9W","status":"successful"}
-    $paymentID = $body["paymentID"];        
-
-    $args = array(
-      'return' => 'ids',
-      'payment_method' => 'cryptopal_gateway',
-      'cryptopal_paymentID' => $paymentID
-  );
-  $orders = wc_get_orders( $args );
-
-  //$orders = wc_get_orders( array( 'cryptopal_paymentID' => 'somevalue' ) );
-
-  CPG_Useful::log('response del webhook '.$orders);
-  CPG_Useful::log(json_decode($orders, true));
+    $paymentID = $body["paymentID"];
   
 
-  //$order->get_id()
+    $orders = get_posts( array(
+      'numberposts' => -1,
+      'meta_key'    => 'cryptopal_paymentID',
+      'meta_value'  => $paymentID,
+      'post_type'   => 'shop_order',
+      'post_status' => 'wc-on-hold',
+  ) );
 
-    // $order = wc_get_order($id_order);  
-    // $order->set_status('wc-completed');
-    // $order->save();
+    $order_id = $orders[0]['ID'];
+
+    $order = wc_get_order($order_id);  
+    $order->set_status('wc-completed');
+    $order->save();
 
     return http_response_code(200);
   }

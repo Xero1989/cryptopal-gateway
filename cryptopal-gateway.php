@@ -39,6 +39,7 @@ function cpg_plugin_deactivation()
 
 
 
+
  require __DIR__ . '/vendor/autoload.php';
 
  require 'plugin_system/Init.php';
