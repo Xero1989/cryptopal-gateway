@@ -101,15 +101,17 @@ class CPG_CryptopalController
     $payment_gateways   = WC_Payment_Gateways::instance();
 
     // Get the desired WC_Payment_Gateway object
-    $payment_gateway    = $payment_gateways->payment_gateways()[$payment_gateway_id];
+    $payment_gateway = $payment_gateways->payment_gateways()[$payment_gateway_id];
 
     //$webshop_id = get_option("cpg_webshop_id");
-    $webshop_id = $payment_gateway->cpg_webshop_id;
+    $webshop_id = $payment_gateway->get_option('cpg_webshop_id');
     $currency = get_woocommerce_currency();
+
+    //CPG_Useful::log('webshopid '.$webshop_id);
 
     $body = array(
       "items" => array($items),
-      "webshopID" => 'K5xkG3DFfSpNMoi9Y',
+      "webshopID" => $webshop_id,
       "currency" => $currency
     );
 
