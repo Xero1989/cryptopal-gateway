@@ -113,7 +113,7 @@ class Cryptopal_Gateway_Main extends WC_Payment_Gateway
 
             $name = $product->get_title();
             $price = $product->get_price();
-            $amount = $item->get_total();
+            $amount = $item->get_quantity();
 
             //$product_name = $item->get_name();
             //$quantity = $item->get_quantity();
@@ -125,8 +125,9 @@ class Cryptopal_Gateway_Main extends WC_Payment_Gateway
 
         //$settings = compact('xpeg_api_token_url', 'xpeg_api_payment_url', 'xpeg_id_service', 'xpeg_access_key', 'xpeg_secret_key', 'xpeg_expiration_day', 'xpeg_merchant_name', 'xpeg_payment_concept', 'xpeg_merchant_category', 'xpeg_user_ubigeo', 'xpeg_user_document_type', 'xpeg_user_code_country');
 
+        CPG_Useful::log("products");
         CPG_Useful::log($products);
-        $response = CPG_CryptopalController::get_api_info($products);
+        $response = Cryptopal_Gateway_Main::get_api_info($products);
 
 
 
@@ -137,15 +138,18 @@ class Cryptopal_Gateway_Main extends WC_Payment_Gateway
             $url_payment = $response["url"];
             $paymentID = $response["paymentID"];
 
-           // CPG_Useful::log("URL de pago $url_payment");
-
-
+            CPG_Useful::log("URL de pago $url_payment");
 
             //return;
             session_start();
             $_SESSION['cryptopal_url_payment'] = $url_payment;
 
             $order->update_meta_data('cryptopal_paymentID', $paymentID);
+
+         //   wp_enqueue_script('js_cryptopal', plugin_dir_url(__FILE__) . '../assets/js/cpg_cryptopal.js', array(), '1.0');
+
+            //wp_add_inline_script('js_cryptopal', 'var url_cryptopal_app = "'.$url_payment.'";');
+           // wp_add_inline_script('js_cryptopal', 'open_cryptopal_app_window("' . $url_payment . '");');
 
             // $meta_data = $order->get_meta('cryptopal_paymentID');
 
@@ -194,5 +198,61 @@ class Cryptopal_Gateway_Main extends WC_Payment_Gateway
                 'redirect'  => $this->get_return_url($order)
             );
         }
+    }
+
+    public function get_api_info($items)
+    {
+      $url = "https://demo.teslacryptocap.com/cryptopalPayments";
+  
+      $payment_gateway_id = 'cryptopal_gateway';
+  
+      // Get an instance of the WC_Payment_Gateways object
+      $payment_gateways   = WC_Payment_Gateways::instance();
+  
+      // Get the desired WC_Payment_Gateway object
+      $payment_gateway = $payment_gateways->payment_gateways()[$payment_gateway_id];
+  
+      //$webshop_id = get_option("cpg_webshop_id");
+      $webshop_id = $payment_gateway->get_option('cpg_webshop_id');
+      $currency = get_woocommerce_currency();
+  
+      //CPG_Useful::log('webshopid '.$webshop_id);
+  
+      $body = array(
+        "items" => $items,
+        "webshopID" => $webshop_id,
+        "currency" => $currency
+      );
+  
+      CPG_Useful::log($body);
+      // CPG_Useful::log($url);
+  
+      $response = wp_remote_post(
+        $url,
+        array(
+          'headers' => array('Content-Type' => 'application/json'),
+          'body' => wp_json_encode($body),
+        )
+      );
+  
+      $response_code = wp_remote_retrieve_response_code($response);
+      $body = wp_remote_retrieve_body($response);
+  
+      if ($response_code == 200) {
+        $body = wp_remote_retrieve_body($response);
+  
+        $body = json_decode($body, true);
+        CPG_Useful::log($body);
+  
+        return $body;
+      } else {
+        CPG_Useful::log("Ocurrio un error consultando el API crytopal...");
+        CPG_Useful::log($response);
+        CPG_Useful::log($body);
+  
+        $body = json_decode($body, true);
+  
+        return false;
+      }
     }
 }

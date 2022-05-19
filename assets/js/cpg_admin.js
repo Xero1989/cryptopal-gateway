@@ -11,7 +11,8 @@ function cpg_save_settings() {
   let cpg_enable = jQuery("#cpg_enable").prop("checked");
   let cpg_description = jQuery("#cpg_description").val();
   let cpg_webshop_id = jQuery("#cpg_webshop_id").val();
-  let cpg_webhook_url = jQuery("#cpg_webhook_url").val();
+  let cpg_webhook_url = "";
+  //jQuery("#cpg_webhook_url").val();
 
   jQuery(".bt_save_settings").attr("disabled", true);
   jQuery(".bt_save_settings").val("Sending Data...");

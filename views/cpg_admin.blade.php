@@ -33,14 +33,14 @@
                     <input type="text" value="{{$cpg_webshop_id}}" id="cpg_webshop_id" />
                 </td>
             </tr>
-            <tr>
+            <!-- <tr>
                 <th>
                     <label>Webhook URL</label>
                 </th>
                 <td>
                     <input type="text" value="{{$cpg_webhook_url}}" id="cpg_webhook_url" />
                 </td>
-            </tr>
+            </tr> -->
         </table>
 <br>
 
