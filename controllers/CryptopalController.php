@@ -181,20 +181,26 @@ class CPG_CryptopalController
 
 
 //SHOP FUNCTION
-  static function open_crypto_payment_window($text, $order)
+  static function open_crypto_payment_window($id_order)
   {
     session_start();
     $url = $_SESSION['cryptopal_url_payment'];
 
+    $order = wc_get_order( $id_order );
     $payment_method = $order->get_payment_method();
 
+    CPG_Useful::log($url);
 
     if ($payment_method == "cryptopal_gateway") {
+         
+      //wp_safe_redirect("http:". $url );
+      wp_redirect($url );
+        exit; 
 
-      wp_enqueue_script('js_cryptopal', plugin_dir_url(__FILE__) . '../assets/js/cpg_cryptopal.js', array(), '1.0');
+      //wp_enqueue_script('js_cryptopal', plugin_dir_url(__FILE__) . '../assets/js/cpg_cryptopal.js', array(), '1.0');
 
       //wp_add_inline_script('js_cryptopal', 'var url_cryptopal_app = "'.$url_payment.'";');
-      wp_add_inline_script('js_cryptopal', 'open_cryptopal_app_window("' . $url . '");');
+      //wp_add_inline_script('js_cryptopal', 'open_cryptopal_app_window("' . $url . '");');
 
       //return 'Hola mundo crypto '.$url.$payment_method;
 

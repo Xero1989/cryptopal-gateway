@@ -28,7 +28,7 @@ class CPG_Init
 
         add_filter('woocommerce_payment_gateways', 'CPG_AdminController::add_new_gateway');
 
-        add_filter('woocommerce_thankyou_order_received_text', 'CPG_CryptopalController::open_crypto_payment_window', 10, 2);
+       // add_filter('woocommerce_thankyou_order_received_text', 'CPG_CryptopalController::open_crypto_payment_window', 10, 2);
     }
 
     function load_actions()
@@ -48,6 +48,8 @@ class CPG_Init
 
         //Gateway version
         add_action('plugins_loaded', 'CPG_AdminController::create_cryptopal_gateway', 11);
+
+        add_action( 'woocommerce_thankyou', 'CPG_CryptopalController::open_crypto_payment_window', 10, 1);
 
       //  $plugin_enable = get_option("cpg_enable");
 
