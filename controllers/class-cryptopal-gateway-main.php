@@ -145,6 +145,7 @@ class Cryptopal_Gateway_Main extends WC_Payment_Gateway
             $_SESSION['cryptopal_url_payment'] = $url_payment;
 
             $order->update_meta_data('cryptopal_paymentID', $paymentID);
+            //wc_add_order_item_meta($item_id,'wdm_user_custom_data',$user_custom_values);  
 
          //   wp_enqueue_script('js_cryptopal', plugin_dir_url(__FILE__) . '../assets/js/cpg_cryptopal.js', array(), '1.0');
 
