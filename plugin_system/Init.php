@@ -34,22 +34,22 @@ class CPG_Init
     function load_actions()
     {
         //Admin menu version
-        add_action('admin_menu', 'CPG_AdminController::create_custom_menu');
-        add_action('wp_ajax_cpg_save_settings', 'CPG_AdminController::cpg_save_settings');
-        add_action('wp_ajax_get_app_url_from_cryptopal', 'CPG_CryptopalController::get_app_url_from_cryptopal');
+        // add_action('admin_menu', 'CPG_AdminController::create_custom_menu');
+        // add_action('wp_ajax_cpg_save_settings', 'CPG_AdminController::cpg_save_settings');
+        // add_action('wp_ajax_get_app_url_from_cryptopal', 'CPG_CryptopalController::get_app_url_from_cryptopal');
 
-        add_action('woocommerce_after_shop_loop_item', "CPG_CryptopalController::show_crypto_payment_button");
-        add_action('woocommerce_after_main_content', 'CPG_CryptopalController::write_modal');
+       // add_action('woocommerce_after_shop_loop_item', "CPG_CryptopalController::show_crypto_payment_button");
+        //add_action('woocommerce_after_main_content', 'CPG_CryptopalController::write_modal');
         
 
          //Webhook
-         add_action("rest_api_init", "CPG_CryptopalController::cryptopal_notification");
+       //  add_action("rest_api_init", "CPG_CryptopalController::cryptopal_notification");
 
 
         //Gateway version
         add_action('plugins_loaded', 'CPG_AdminController::create_cryptopal_gateway', 11);
 
-        add_action( 'woocommerce_thankyou', 'CPG_CryptopalController::open_crypto_payment_window', 10, 1);
+       // add_action( 'woocommerce_thankyou', 'CPG_CryptopalController::open_crypto_payment_window', 10, 1);
 
       //  $plugin_enable = get_option("cpg_enable");
 

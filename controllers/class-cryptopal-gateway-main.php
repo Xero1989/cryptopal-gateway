@@ -57,14 +57,14 @@ class Cryptopal_Gateway_Main extends WC_Payment_Gateway
                 'default'     => '',
                 'desc_tip'    => true,
             ),
-
-            /*'cpg_webhook' => array(
-                'title'       => 'Webhook URL',
+            'cpg_webhook' => array(
+                'title'       => 'Webhook',
                 'type'        => 'text',
-                'description' => 'The webhook URL of the cryptopal webshop',
+                'description' => 'The URL of the webhook will be https://{domain}/wp-json/cryptopal_gateway/v1/{Webhook}',
                 'default'     => '',
                 'desc_tip'    => true,
-            ),*/
+                'placeholder' => 'Ex: MyShop_webhook'
+            ),
         );
     }
 
@@ -78,7 +78,7 @@ class Cryptopal_Gateway_Main extends WC_Payment_Gateway
 
         $description = $post_data["woocommerce_cryptopal_gateway_cpg_description"];
         $webshop_id = $post_data["woocommerce_cryptopal_gateway_cpg_webshop_id"];
-        // $webhook = $post_data["woocommerce_cryptopal_gateway_cpg_webhook"];
+         $webhook = $post_data["woocommerce_cryptopal_gateway_cpg_webhook"];
 
         $settings = new WC_Admin_Settings();
 
@@ -90,9 +90,9 @@ class Cryptopal_Gateway_Main extends WC_Payment_Gateway
             $settings->add_error('You must enter a "Webshop ID"');
         }
 
-        /*  if ($webhook == "") {
+          if ($webhook == "") {
             $settings->add_error('You must enter a "Webhook"');
-        }*/
+        }
 
         return parent::process_admin_options();
     }
@@ -125,16 +125,17 @@ class Cryptopal_Gateway_Main extends WC_Payment_Gateway
 
         //$settings = compact('xpeg_api_token_url', 'xpeg_api_payment_url', 'xpeg_id_service', 'xpeg_access_key', 'xpeg_secret_key', 'xpeg_expiration_day', 'xpeg_merchant_name', 'xpeg_payment_concept', 'xpeg_merchant_category', 'xpeg_user_ubigeo', 'xpeg_user_document_type', 'xpeg_user_code_country');
 
-        CPG_Useful::log("products");
-        CPG_Useful::log($products);
+        // CPG_Useful::log("products");
+        // CPG_Useful::log($products);
         $response = Cryptopal_Gateway_Main::get_api_info($products);
 
 
 
         if (!$response) {
-            return;
+            CPG_Useful::log("erorr chckout");
+            wc_add_notice("Something went wrong trying to pay with cryptopal method","error");
         } else {
-
+            CPG_Useful::log("succes chckout");
             $url_payment = $response["url"];
             $paymentID = $response["paymentID"];
 
@@ -233,6 +234,7 @@ class Cryptopal_Gateway_Main extends WC_Payment_Gateway
         array(
           'headers' => array('Content-Type' => 'application/json'),
           'body' => wp_json_encode($body),
+         // 'timeout'     => 8000,
         )
       );
   

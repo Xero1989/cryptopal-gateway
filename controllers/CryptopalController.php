@@ -134,9 +134,11 @@ class CPG_CryptopalController
   {
     CPG_Useful::log("register webhhook");
 
+    $webhook_endpoint = get_option("cpg_webhook");
+
     register_rest_route(
       "cryptopal_gateway/v1/", //Namespace
-      "receive_callback",    //Endpoint
+      $webhook_endpoint,    //Endpoint
       //WEBHOOK EXMPLE
       //https://staging2.xdsclients.com/wp-json/xirect_pagoefectivo/v1/receive_callback
       array(

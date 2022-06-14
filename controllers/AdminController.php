@@ -53,6 +53,7 @@ static function add_new_gateway($gateways)
 
     CPG_Useful::log("$cpg_enable - $cpg_description - $cpg_webshop_id - $cpg_webhook_url");
 
+    
     CPG_Blade::view('cpg_admin', compact('cpg_enable','cpg_description','cpg_webshop_id','cpg_webhook_url'));
   }
 
