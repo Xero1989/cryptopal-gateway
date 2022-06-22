@@ -30,7 +30,7 @@ class CPG_CryptopalController
     //die(plugin_dir_url(__FILE__) . '../assets/js/cpg_cryptopal.js');
 
     CPG_Blade::view('cpg-modal-payment');
-  } 
+  }
 
   static function get_app_url_from_cryptopal()
   {
@@ -55,12 +55,12 @@ class CPG_CryptopalController
     CPG_Useful::log("url $url_payment");
 
     if ($response != false) {
-       CPG_Useful::ajax_server_response(array("message" => "Settings has been saved correctly", "url" => $url_payment));
-     // wp_enqueue_script('js_cryptopal', plugin_dir_url(__FILE__) . '../assets/js/cpg_cryptopal.js', array(), '1.0');
+      CPG_Useful::ajax_server_response(array("message" => "Settings has been saved correctly", "url" => $url_payment));
+      // wp_enqueue_script('js_cryptopal', plugin_dir_url(__FILE__) . '../assets/js/cpg_cryptopal.js', array(), '1.0');
 
-     // wp_add_inline_script('js_cryptopal', 'var url_cryptopal_app = "' . $url_payment . '";');
+      // wp_add_inline_script('js_cryptopal', 'var url_cryptopal_app = "' . $url_payment . '";');
     } else {
-        CPG_Useful::ajax_server_response(array("status" => "error", "message" => "There was an error consulting the data,please try again...", "url" => ""));
+      CPG_Useful::ajax_server_response(array("status" => "error", "message" => "There was an error consulting the data,please try again...", "url" => ""));
 
       //wp_add_inline_script('js_cryptopal', 'var url_cryptopal_app = "";');
     }
@@ -125,16 +125,27 @@ class CPG_CryptopalController
       return false;
     }
   }
-//SINGLE BUTTON APP
+  //SINGLE BUTTON APP
 
 
 
-//WEBHOOK
+  //WEBHOOK
   static function cryptopal_notification()
   {
     CPG_Useful::log("register webhhook");
 
-    $webhook_endpoint = get_option("cpg_webhook");
+    $payment_gateway_id = 'cryptopal_gateway';
+
+    // Get an instance of the WC_Payment_Gateways object
+    $payment_gateways   = WC_Payment_Gateways::instance();
+
+    // Get the desired WC_Payment_Gateway object
+    $payment_gateway = $payment_gateways->payment_gateways()[$payment_gateway_id];
+
+    //$webshop_id = get_option("cpg_webshop_id");
+    $webhook_endpoint = $payment_gateway->get_option('cpg_webhook');
+
+
 
     register_rest_route(
       "cryptopal_gateway/v1/", //Namespace
@@ -162,42 +173,51 @@ class CPG_CryptopalController
     //{"paymentID":"WCZzs4JecoKtTif9W","status":"successful"}
     $paymentID = $body["paymentID"];
 
-
-    $orders = get_posts(array(
-      'numberposts' => -1,
+    $temp = get_posts(array(
+      'numberposts' => 1,
       'meta_key'    => 'cryptopal_paymentID',
       'meta_value'  => $paymentID,
       'post_type'   => 'shop_order',
       'post_status' => 'wc-on-hold',
     ));
 
-    $order_id = $orders[0]['ID'];
 
-    $order = wc_get_order($order_id);
-    $order->set_status('wc-completed');
-    $order->save();
+    CPG_Useful::log("ordenes con pament id");
+    CPG_Useful::log($temp);
+
+    //parse_str($temp,$orders);
+
+    if (count($temp) == 1) {
+      $order_id = $temp[0]->ID;
+
+      CPG_Useful::log("order id " . $order_id);
+
+      $order = wc_get_order($order_id);
+      $order->set_status('wc-completed');
+      $order->save();      
+    }
 
     return http_response_code(200);
   }
-//WEBHOOK
+  //WEBHOOK
 
 
-//SHOP FUNCTION
+  //SHOP FUNCTION
   static function open_crypto_payment_window($id_order)
   {
     session_start();
     $url = $_SESSION['cryptopal_url_payment'];
 
-    $order = wc_get_order( $id_order );
+    $order = wc_get_order($id_order);
     $payment_method = $order->get_payment_method();
 
     CPG_Useful::log($url);
 
     if ($payment_method == "cryptopal_gateway") {
-         
+
       //wp_safe_redirect("http:". $url );
-      wp_redirect($url );
-        exit; 
+      wp_redirect($url);
+      exit;
 
       //wp_enqueue_script('js_cryptopal', plugin_dir_url(__FILE__) . '../assets/js/cpg_cryptopal.js', array(), '1.0');
 
@@ -211,7 +231,7 @@ class CPG_CryptopalController
     return '';
   }
 
-//BORRAR
+  //BORRAR
   static function checkout_field_process()
   {
     CPG_Useful::log("checkout_field_process");

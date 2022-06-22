@@ -258,4 +258,6 @@ class Cryptopal_Gateway_Main extends WC_Payment_Gateway
         return false;
       }
     }
+
+    
 }

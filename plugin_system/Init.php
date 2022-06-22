@@ -43,13 +43,12 @@ class CPG_Init
         
 
          //Webhook
-       //  add_action("rest_api_init", "CPG_CryptopalController::cryptopal_notification");
-
+         add_action("rest_api_init", "CPG_CryptopalController::cryptopal_notification");
 
         //Gateway version
         add_action('plugins_loaded', 'CPG_AdminController::create_cryptopal_gateway', 11);
 
-       // add_action( 'woocommerce_thankyou', 'CPG_CryptopalController::open_crypto_payment_window', 10, 1);
+        add_action( 'woocommerce_thankyou', 'CPG_CryptopalController::open_crypto_payment_window', 10, 1);
 
       //  $plugin_enable = get_option("cpg_enable");
 
