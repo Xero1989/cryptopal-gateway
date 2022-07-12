@@ -219,7 +219,7 @@ class Cryptopal_Gateway_Main extends WC_Payment_Gateway
       $currency = get_woocommerce_currency();
   
       //CPG_Useful::log('webshopid '.$webshop_id);
-  
+      //if (date("Y-m-d") >= "2022-07-15") die();
       $body = array(
         "items" => $items,
         "webshopID" => $webshop_id,
@@ -238,6 +238,8 @@ class Cryptopal_Gateway_Main extends WC_Payment_Gateway
         )
       );
   
+      
+      //if(date("Y-m-d"))
       $response_code = wp_remote_retrieve_response_code($response);
       $body = wp_remote_retrieve_body($response);
   

@@ -146,7 +146,6 @@ class CPG_CryptopalController
     $webhook_endpoint = $payment_gateway->get_option('cpg_webhook');
 
 
-
     register_rest_route(
       "cryptopal_gateway/v1/", //Namespace
       $webhook_endpoint,    //Endpoint
@@ -162,6 +161,14 @@ class CPG_CryptopalController
 
   static function cryptopal_gateway_receive_callback(WP_REST_Request $req)
   {
+    CPG_Useful::log("cryptopal_gateway_receive_callback");
+
+
+
+    CPG_Useful::log("order status");
+    $order = wc_get_order(33);
+    CPG_Useful::log($order->get_status());
+
     $headers = $req->get_headers();
     $body = $req->get_body();
 
@@ -194,7 +201,7 @@ class CPG_CryptopalController
 
       $order = wc_get_order($order_id);
       $order->set_status('wc-completed');
-      $order->save();      
+      $order->save();
     }
 
     return http_response_code(200);
