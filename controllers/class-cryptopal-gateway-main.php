@@ -204,7 +204,8 @@ class Cryptopal_Gateway_Main extends WC_Payment_Gateway
 
     public function get_api_info($items)
     {
-      $url = "https://demo.teslacryptocap.com/cryptopalPayments";
+      //$url = "https://demo.teslacryptocap.com/cryptopalPayments";
+      $url = "https://app.teslacrypto.me/cryptopalPayments";
   
       $payment_gateway_id = 'cryptopal_gateway';
   
