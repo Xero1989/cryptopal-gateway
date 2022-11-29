@@ -169,7 +169,7 @@ class Cryptopal_Gateway_Main extends WC_Payment_Gateway
         $response = wp_remote_post(
             $url,
             array(
-                'headers' => array('Content-Type' => 'application/json'),
+                'headers' => array('Content-Type' => 'application/json','Authorization' => 'Basic ' . base64_encode( 'ck_0e850a94c02001a944342bf4fa3ce71200e7cf43:cs_9b627f1d1c5cb504842e604f75393f8c024fb342' )),
                 'body' => wp_json_encode($body),
             )
         );
